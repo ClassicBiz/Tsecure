@@ -38,5 +38,4 @@ function checkForUpdates(updateUrl)
 		end
 	end
 end
-
-checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/installer")
+checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/version")
