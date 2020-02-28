@@ -50,7 +50,7 @@ term.clear()
 term.setCursorPos(1,1)
 print("Installing..")
 if fs.exists("startup") then
-    rID = math.random(1-100)
+    rID = math.random(1,100)
     fs.move("startup",".startup"..rID)
     fs.move("/Tsecure/startup/","/startup")
 end
@@ -61,5 +61,5 @@ term.setCursorPos(1,1)
 print("Installation Complete!")
 
 if fs.exists("/Tescure/updater") then
-    fs.delete("/Tsecure/installer")
+    fs.delete("/Tsecure/installer.lua")
 end
