@@ -30,6 +30,7 @@ function checkForUpdates(updateUrl)
 	      	if response then
             local data = response.readAll()
     			     print("V:"..data)
+			     newVer = data
 			        if data == current then
 				    update = 0
 				    k = false
@@ -44,11 +45,24 @@ function checkForUpdates(updateUrl)
 end
 checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/version")
 if update == 1 then
+	
 	if fs.exists("/Tsecure/installer.lua") then
 		fs.delete("/Tsecure/installer.lua")
 	end
 	downloadFiles("installer", "installer.lua")
 	shell.run("/Tsecure/installer.lua")
+	local file = fs.open("/Tsecure/tData/","r")
+	local verTbl = textutils.unserialise(file.readAll())
+	file.close()
+	for ID, var in pairs(verTbl) do
+		cLabel = ID
+		cID = var[1]
+		redput = var[2]
+	end
+	upFile[cLabel] = {cID, redput, newVer}
+	local save = fs.open("Tsecure/tData","w")
+	save.write(textutils.serialise(upFile))
+	save.close()	
 else
 	print("You're all up to date!")
         k = false
