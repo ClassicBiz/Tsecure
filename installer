@@ -43,6 +43,7 @@ downloadFiles("config", "config")
 downloadFiles("Opt.lua", "Opt.lua")
 downloadFiles("Remove.lua","Remove.lua")
 downloadFiles("regist","regist")
+downloadFiles("updater","updater")
 print("Downloading complete!")
 sleep(1)
 term.clear()
@@ -54,3 +55,7 @@ sleep(1)
 term.clear()
 term.setCursorPos(1,1)
 print("Installation Complete!")
+
+if fs.exists("/Tescure/updater") then
+    fs.delete("/Tsecure/installer")
+end
