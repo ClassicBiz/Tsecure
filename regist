@@ -1,0 +1,268 @@
+settings.set("shell.allow_disk_startup", false)
+settings.save(".settings")
+--local pullEvent = os.pullEvent
+--os.pullEvent = os.pullEventRaw
+
+-- var --
+local user = {}
+local Lab = {}
+local RiD = {}
+local fDisk = false
+local level = "9"
+local Map = window.create(term.current(),1,1,51,22)
+local Uap = window.create(term.current(),16,13,20,1)
+local Pap = window.create(term.current(),16,15,20,1)
+-- func --
+
+function Mdisplay()
+  Map.setBackgroundColor(colors.cyan)
+  Map.setTextColor(colors.white)
+  Map.clear()
+  Map.setCursorPos(20,6)
+  Map.write("True")
+  Map.setCursorPos(25,6)
+  Map.setTextColor(colors.white)
+  Map.write("Security")
+end
+
+function Udisplay()
+  Uap.setBackgroundColor(colors.white)
+  Uap.setTextColor(colors.lightGray)
+  Uap.clear()
+  Uap.setCursorPos(1,1)
+  Uap.setCursorBlink(true)
+  Uap.write("Username")
+  Uap.setBackgroundColor(colors.white)
+  Uap.setTextColor(colors.gray)
+end
+
+function Pdisplay()
+  Pap.setBackgroundColor(colors.white)
+  Pap.setTextColor(colors.lightGray)
+  Pap.clear()
+  Pap.setCursorPos(1,1)
+  Pap.write("Computer's Name")
+  Pap.setTextColor(colors.gray)
+end
+
+function new()
+  Mdisplay()
+  Map.setCursorPos(8, 8)
+  Map.setTextColor(colors.gray)
+  Map.write("Please select a username and password.")
+  Uap.setBackgroundColor(colors.white)
+  Uap.setTextColor(colors.lightGray)
+  Uap.clear()
+  Uap.setCursorPos(1,1)
+  Uap.setCursorBlink(true)
+  Uap.write("New username")
+  Uap.setBackgroundColor(colors.white)
+  Uap.setTextColor(colors.gray)
+  Pap.setBackgroundColor(colors.white)
+  Pap.setTextColor(colors.lightGray)
+  Pap.clear()
+  Pap.setCursorPos(1,1)
+  Pap.write("New Password")
+  Pap.setTextColor(colors.gray)
+end
+
+local function load()
+  if fs.exists("Tsecure/TiD","r") then
+    local h = fs.open("Tsecure/TiD","r")
+    local d = h.readAll()
+    h.close()
+    return textutils.unserialise(d)
+  else
+  end
+end
+
+local function LoadR()
+  if fs.exists("/Tsecure/TiD","r") then
+    local s = fs.open("/Tsecure/TiD","r")
+    local p = s.readAll()
+    s.close()
+    return textutils.unserialise(p)
+  else
+  end
+end
+
+
+function setL()
+  if fs.exists("/Tsecure/tData","r") then
+    print("file exists")
+  else
+    Mdisplay()
+    Pdisplay()
+    paintutils.drawPixel(13,22,colors.white)
+    Pap.setCursorPos(1,1)
+    local L = read()
+    local red = "back"
+    local cID = os.getComputerID()
+    os.setComputerLabel(L)
+     Lab[L] = {cID, red}
+    local f = fs.open("/Tsecure/tData","w")
+    f.write(textutils.serialise(Lab))
+    f.close()
+  end
+end
+
+local function sDisk()
+  repeat
+    local event, side = os.pullEvent()
+    if event == "disk" then
+      if fs.exists("/disk/Tsecure/tData","r") then
+        disk.eject(side)
+        Mdisplay()
+        Map.setTextColor(colors.red)
+        Map.setCursorPos(3,9)
+        Map.write("Disk is already formatted!")
+        sleep(2)
+      else
+        Mdisplay()
+        Map.setTextColor(colors.gray)
+        Map.setCursorPos(3,9)
+        Map.write("Saving user to disk..")
+        sleep(1)
+        local diskID = disk.getID(side)
+        local continue = true
+        local randomID
+
+        while continue do
+          randomID = math.random(diskID, 1000000)
+          if (RiD[randomID]) == nil then
+            RiD[randomID] = username
+            continue = false
+          end
+        end
+
+        local fh = fs.open("/disk/Tsecure/tData","w")
+        fh.write(textutils.serialise(RiD))
+        fh.close()
+        Map.setCursorPos(3,9)
+        Map.write("Saving user to disk...")
+        if fs.exists("/Tsecure/TiD","r") then
+          RiD = LoadR()
+          level = "1"
+        end
+
+
+        RiD[randomID] = {username, pass, level}
+
+        local s = fs.open("/Tsecure/TiD","w")
+        s.write(textutils.serialise(RiD))
+        s.close()
+        Map.setCursorPos(3,9)
+        Map.write("Saving user to " .. os.getComputerLabel() .. "....")
+        disk.setLabel(side, os.getComputerLabel() .. " : " .. diskID)
+        sleep(1)
+        Mdisplay()
+        Map.setCursorPos(3,9)
+        Map.setTextColor(colors.green)
+        Map.write("settings were successfully saved!")
+        os.sleep(0.5)
+        fDisk = true
+      end
+    else
+      Mdisplay()
+      Map.setTextColor(colors.gray)
+      Map.setCursorPos(9,9)
+      Map.write("Please insert a disk to continue.")
+      sleep(0.5)
+
+    end
+  until fDisk == true
+end
+
+
+local function Regist()
+  --if fs.exists("Tsecure/TiD","r") then
+  local check = false
+  repeat
+    if fs.exists("/Tsecure/TiD","r") then
+      user = load()
+      level = "1"
+    end
+    -- if users exists then ask if a user is being created or added.
+    Mdisplay()
+	Map.setCursorPos(51,1)
+	Map.setTextColor(colors.red)
+	Map.write("x")
+    Map.setCursorPos(11,9)
+    Map.setTextColor(colors.gray)
+    Map.write("Select one of the options below")
+    paintutils.drawLine(20, 11, 32, 11, colors.white)
+    term.setTextColor(colors.lightGray)
+    term.setCursorPos(22,11)
+    write("Add A User")
+    paintutils.drawLine(20, 13, 32, 13, colors.white)
+    term.setCursorPos(21,13)
+    write("Create User")
+    local event, param1, x,y = os.pullEvent()
+    if event == "mouse_click" and x>=20 and x<=32 and y == 11 then
+      local cDisk = false
+      setL()
+      repeat
+        Mdisplay()
+        Map.setTextColor(colors.gray)
+        Map.setCursorPos(8,10)
+        Map.write("Insert the user disk you wish to add")
+        local event1, side = os.pullEvent()
+        if event1 == "disk" then
+          if fs.exists("/disk/Tsecure/tData","r") then
+            local diskFile = fs.open("/disk/Tsecure/tData","r")
+            local diskTbl = textutils.unserialise(diskFile.readAll())
+            diskFile.close()
+            for dUserID, dUser in pairs(diskTbl) do
+              Mdisplay()
+              Map.setTextColor(colors.gray)
+              Map.setCursorPos(17, 9)
+              Map.write("Choose a password")
+              paintutils.drawLine(18, 13, 32, 13, colors.white)
+              Map.setCursorPos(18,13)
+              if user[dUserID] == nil then
+                dPass = read("*")
+                user[dUserID] = { dUser, dPass, level}
+                local dSave = fs.open("/Tsecure/TiD","w")
+                dSave.write(textutils.serialise(user))
+                dSave.close()
+                os.sleep(1)
+                cDisk = true
+                check = true
+              else
+                Mdisplay()
+                Map.setCursorPos(16,10)
+                Map.setTextColor(colors.red)
+                Map.write("User already Exists!")
+                os.sleep(1)
+              end
+
+            end
+          else
+            print("file not found")
+            os.sleep(1.5)
+          end
+
+        end
+      until cDisk == true
+    elseif event == "mouse_click" and x>=20 and x<=32 and y == 13 then
+      check = true
+      setL()
+      new()
+      paintutils.drawPixel(13,20, colors.white)
+      Uap.setCursorPos(1,1)
+      username = read()
+      Pap.setCursorPos(1,1)
+      pass = read("*")
+      user[username] = pass
+      sDisk()
+	elseif event == "mouse_click" and x>=50 and x<=51 and y == 1 then
+        if fs.exists("/Tsecure/TiD","r") then
+			check = true
+			return error()
+		end
+    end
+  until check == true
+end
+
+Regist()
+shell.run("startup")
