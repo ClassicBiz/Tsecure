@@ -27,10 +27,14 @@ function checkForUpdates(updateUrl)
 		local response = http.get(updateUrl)
 		if response then
 			local data = response.readAll()
-			if data ~= currentVersion then
+			if data == currentVersion then
+				print("your all up to date!")
+				return true
+			else
 				print("A new update is avaliable.")
 				sleep(1)
-				if not fs.exists("/Tsecure/installer.lua") then
+				if fs.exists("/Tsecure/installer.lua") then
+					fs.delete("/Tsecure/installer.lua")
 					downloadFiles("installer", "installer.lua")
 				end
 				shell.run("/Tsecure/installer")
