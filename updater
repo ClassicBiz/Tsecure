@@ -1,0 +1,42 @@
+currentVersion = 1.0
+
+function downloadFiles(urlFile, pathFile)
+    local url = "https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/" .. urlFile
+    print("Downloading From >>")
+    print(url)
+    for i = 1, 3 do
+        local response = http.get(url)
+        if response then
+            local data = response.readAll()
+            if pathFile then
+                local path = "/Tsecure/" .. pathFile
+                print("Saving to >>")
+                print(path)
+                local file = fs.open(path, "w")
+                file.write(data)
+                file.close()
+            end
+            return true
+        end
+    end
+    return false
+end
+
+function checkForUpdates(updateUrl)
+	for i = 1, 3 do
+		local response = http.get(updateUrl)
+		if response then
+			local data = response.readAll()
+			if data ~= currentVersion then
+				print("A new update is avaliable.")
+				sleep(1)
+				if not fs.exists("/Tsecure/installer.lua") then
+					downloadFiles("installer", "installer.lua")
+				end
+				shell.run("/Tsecure/installer")
+			end
+		end
+	end
+end
+
+checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/installer")
