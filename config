@@ -1,0 +1,264 @@
+-- var --
+local Map = window.create(term.current(),1,1,51,22)
+local Sap = window.create(term.current(),12,4,28,10)
+local continue = true
+local uTbl = {}
+-- func --
+
+function Mdisplay()
+	Map.setBackgroundColor(colors.cyan)
+	Map.setTextColor(colors.white)
+	Map.clear()
+	Map.setCursorPos(36,19)
+	Map.write("TS Version:")
+      if fs.exists("Tsecure/tData","r") then	
+		        Map.setCursorPos(1,19)
+		        Map.write("Computer:")
+		        Map.setTextColor(colors.gray)
+		        Map.setCursorPos(10,19)
+		        Map.write(os.computerLabel())
+          Map.setCursorPos(47,19)
+          Map.write("1.3.6")
+	    end
+		Map.setCursorPos(51,1)
+		Map.setTextColor(colors.red)
+		Map.write("x")
+end
+
+function setColor()
+	if input == side then
+		Sap.setTextColor(colors.red)
+    else
+		Sap.setTextColor(colors.lightGray)
+	end
+end
+
+function Sdisplay()
+    Sap.setBackgroundColor(colors.white)
+    Sap.setTextColor(colors.gray)
+    Sap.clear()
+    Sap.setCursorPos(12,2)
+    Sap.setCursorBlink(false)
+    Sap.write("Config")
+    Sap.setBackgroundColor(colors.white)
+    if reds == true then
+        Sap.setTextColor(colors.gray)
+        Sap.setCursorPos(19,4)
+        Sap.write(">")
+    else
+        Sap.setTextColor(colors.lightGray)
+        Sap.setCursorPos(19,4)
+        Sap.write("<")
+    end
+    Sap.setCursorPos(11,4)
+    Sap.write("Redstone")
+    Sap.setCursorPos(2,5)
+    side = "left"
+    setColor()
+    Sap.write("left ")
+    side = "right"
+    setColor()
+    Sap.write("right ")
+    side = "back"
+    setColor()
+    Sap.write("back ")
+    side = "top"
+    setColor()
+    Sap.write("top ")
+    side = "bottom"
+    setColor()
+    Sap.write("bottom")
+    if us == true then
+        Sap.setTextColor(colors.gray)
+        Sap.setCursorPos(17,7)
+        Sap.write(">")
+    else
+        Sap.setTextColor(colors.lightGray)
+        Sap.setCursorPos(17,7)
+        Sap.write("<")
+    end
+    Sap.setCursorPos(12,7)
+    Sap.write("Users")
+end
+
+function setred()
+     local stone = true
+     while stone do
+     Sdisplay()
+         event1, param1, x,y = os.pullEvent()
+         if event1 == "mouse_click" and x>=12 and x<=16 and y == 8 then
+              input = "left"
+         elseif event1 == "mouse_click" and x>=18 and x<=22 and y == 8 then 
+              input = "right"
+         elseif event1 == "mouse_click" and x>=24 and x<=31 and y == 7 then
+              reds = false
+              continue = true
+              stone = false
+         elseif event1 == "mouse_click" and x>=24 and x<=28 and y == 8 then
+             input = "back"
+         elseif event1 == "mouse_click" and x>=29 and x<=31 and y == 8 then 
+             input = "top"
+         elseif event1 == "mouse_click" and x>=32 and x<=37 and y == 8 then 
+             input = "bottom" 
+         end 
+        
+     end
+end
+
+function load()
+  if fs.exists("Tsecure/tData","r") then
+    local f = fs.open("Tsecure/tData","r")
+    local i = textutils.unserialise(f.readAll())
+    f.close()
+  return (i)
+  end
+end
+
+function uLoad()
+    if fs.exists("/Tsecure/TiD","r") then
+        local file = fs.open("/Tsecure/TiD","r")
+        local users = textutils.unserialise(file.readAll())
+        file.close()
+    return (users)
+    end
+end
+
+function uClear()
+	Sap.setBackgroundColor(colors.white)
+	Sap.setCursorPos(1,8)
+	Sap.write("                         ")
+	Sap.setCursorPos(1,9)
+	Sap.write("                         ")
+end				
+
+function setLevel()
+    local use = true
+    Sdisplay()
+    local temp = fs.open("/Tsecure/TiD","r")
+    local tbl = textutils.unserialise(temp.readAll())
+    temp.close()
+    while use do
+        uClear()
+        Sap.setCursorPos(3,8)
+        for k,v in pairs(tbl) do
+            local x, y = Sap.getCursorPos()
+			         Sap.setCursorPos(x+2,y)
+			         Sap.write(v[1])
+			         if tbl[k][1] == v[1] then
+				            level = tbl[k][3]
+				            user = tbl[k][1]
+			         end
+		      end
+        paintutils.drawLine(20,13, 28, 13, colors.lightBlue)
+        term.setTextColor(colors.white)
+        term.setCursorPos(20,13)
+        write("select User")
+        event2, param1, x,y = os.pullEvent()
+        if event2 == "mouse_click" and x>=20 and x<=30 and y == 13 then
+            local change = true
+            local ucheck = true
+            local success = "green"
+                term.setCursorPos(20,13)
+                write("           ")
+                term.setCursorPos(20,13) 
+                tuser = read()
+            while ucheck do
+			             for id,lev in pairs(tbl) do
+				                if success == "green" then 
+                          level = tbl[id][3]
+                           pass = tbl[id][2]
+					                      user = tbl[id][1]
+                           Id = id
+                    end
+                    if tuser == user then
+                        ucheck = false
+                        success = "red"
+                    end
+                end
+            end
+            while change do
+                uTbl = uLoad()
+                clevel = tonumber(level)
+				            Sap.setBackgroundColor(colors.white)
+				            uClear()
+				            Sap.setCursorPos(12,8)
+				            Sap.write(tuser)
+				            Sap.setCursorPos(14,9)
+				            Sap.write(level)
+				            Sap.setTextColor(colors.lightGray)
+				            Sap.setCursorPos(13,9)
+				            Sap.write("<")
+				            Sap.setCursorPos(15,9)
+				            Sap.write(">")
+				            Sap.setTextColor(colors.gray)
+				            event3, param1, x,y = os.pullEvent()
+				            if event3 == "mouse_click" and x>=24 and x<=24 and y == 12 then
+                   if clevel <= 1 then
+                       Sap.setCursorPos(4,9)
+                       Sap.write("Min Clearance Level!")
+                       sleep(1)
+                   else
+									              nLevel = (level - 1)
+                       level = nLevel
+                   end
+               elseif event3 == "mouse_click" and x>=26 and x<=26 and y == 12 then
+			                if clevel >= 9 then
+									              Sap.setCursorPos(4,9)
+                       Sap.write("Max Clearance Level!")
+                       sleep(1)
+                   else
+                       nLevel = (level + 1)
+                       level = nLevel
+                   end
+               elseif event3 == "mouse_click" and x>=24 and x<=31 and y == 10 then
+                   change = false
+                   if uTbl[Id][1] == tuser then
+                      alevel = tostring(level)
+                      uTbl[Id] = {user,pass,alevel}
+                      local uSave = fs.open("/Tsecure/TiD","w")
+                      uSave.write(textutils.serialise(uTbl))
+                      uSave.close() 
+                   end
+               end
+           end          
+         elseif event2 == "mouse_click" and x>=24 and x<=31 and y == 10 then
+             us = false
+             use = false
+             continue = true
+         end
+     end
+end
+
+i = load()
+--Debugging--
+
+for ID, var in pairs(i) do
+    input = var[2]
+    print(var[2])
+end
+
+--Script--
+
+while continue do
+    Mdisplay()
+    Sdisplay()
+    event, param1, x,y = os.pullEvent()
+    if event == "mouse_click" and x>=24 and x<=31 and y == 7 then
+        continue = false
+        reds = true
+        setred()
+    elseif event == "mouse_click" and x>=24 and x<=31 and y == 10 then
+        us = true
+        continue = false
+        setLevel()
+    elseif event == "mouse_click" and x>=50 and x<=51 and y == 1 then
+        continue = false
+    end
+    local cID = os.getComputerLabel()
+    local ID = os.getComputerID()
+    local red = input
+    i[cID] = {ID, red}
+    local save = fs.open("/Tsecure/tData","w")
+    save.write(textutils.serialise(i))
+    save.close()
+end
