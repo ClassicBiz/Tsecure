@@ -40,6 +40,7 @@ function checkForUpdates(updateUrl)
 				           end
 			            downloadFiles("installer", "installer.lua")
 				           shell.run("/Tsecure/installer.lua")
+					   k = false
 			        end
 		      end
     until k == false
