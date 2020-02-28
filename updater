@@ -36,8 +36,8 @@ function checkForUpdates(updateUrl)
 				sleep(1)
 				if fs.exists("/Tsecure/installer.lua") then
 					fs.delete("/Tsecure/installer.lua")
-					downloadFiles("installer", "installer.lua")
 				end
+				downloadFiles("installer", "installer.lua")
 				shell.run("/Tsecure/installer.lua")
 			end
 		end
