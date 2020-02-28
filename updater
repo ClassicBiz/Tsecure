@@ -1,4 +1,4 @@
-current = "1.7"
+current = "1.8"
 
 function downloadFiles(urlFile, pathFile)
     local url = "https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/" .. urlFile
