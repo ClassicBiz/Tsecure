@@ -4,11 +4,12 @@ function downloadFiles(urlFile, pathFile)
     local url = "https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/" .. urlFile
     print("Downloading From >>")
     print(url)
-    for i = 1, 3 do
+    for i = 1, 2 do
         local fileResponse = http.get(url)
         if fileResponse then
             local fileData = fileResponse.readAll()
             if pathFile then
+                i = 2
                 local path = "/Tsecure/" .. pathFile
                 print("Saving to >>")
                 print(path)
@@ -23,26 +24,24 @@ function downloadFiles(urlFile, pathFile)
 end
 
 function checkForUpdates(updateUrl)
-for k = 1, 3 do
-		local response = http.get(updateUrl)
-		if response then
-			 k = k + 1
-    local data = response.readAll()
-    			print("V:"..data)
-			if data == current then
-			    print("You're all up to date!")
-			else
-			    print("A new update is avaliable.")
-			    sleep(1)
-				if fs.exists("/Tsecure/installer.lua") then
-				    fs.delete("/Tsecure/installer.lua")
-				end
-			    downloadFiles("installer", "installer.lua")
-				shell.run("/Tsecure/installer.lua")
-			return
-			end
-		end
-	end
-
+    repeat
+		      local response = http.get(updateUrl)
+	      	if response then
+            local data = response.readAll()
+    			     print("V:"..data)
+			        if data == current then
+			            print("You're all up to date!")
+             			    k = false
+			        else
+			            print("A new update is avaliable.")
+			            sleep(1)
+				           if fs.exists("/Tsecure/installer.lua") then
+				                fs.delete("/Tsecure/installer.lua")
+				           end
+			            downloadFiles("installer", "installer.lua")
+				           shell.run("/Tsecure/installer.lua")
+			        end
+		      end
+    until k == false
 end
 checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/version")
