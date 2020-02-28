@@ -1,0 +1,56 @@
+function downloadFiles(urlFile, pathFile)
+    local url = "https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/" .. urlFile
+    print("Downloading From >>")
+    print(url)
+    for i = 1, 3 do
+        local response = http.get(url)
+        if response then
+            local data = response.readAll()
+            if pathFile then
+                local path = "/Tsecure/" .. pathFile
+                print("Saving to >>")
+                print(path)
+                local file = fs.open(path, "w")
+                file.write(data)
+                file.close()
+            end
+            return true
+        end
+    end
+    return false
+end
+
+local function verify()
+    local lab = {}
+    if fs.exists("/Tsecure/Ti","r") then
+        print("file exists")
+    else
+        local L = "ID"
+        lab[L] = os.getComputerID()
+        local ver = fs.open("/Tsecure/Ti", "w")
+        ver.write(textutils.serialise(lab))
+        ver.close()
+    end
+end
+        
+
+
+term.clear()
+term.setCursorPos(1,1)
+print("Downloading..")
+downloadFiles("startup", "startup")
+downloadFiles("config", "config")
+downloadFiles("Opt.lua", "Opt.lua")
+downloadFiles("Remove.lua","Remove.lua")
+downloadFiles("regist","regist")
+print("Downloading complete!")
+sleep(1)
+term.clear()
+term.setCursorPos(1,1)
+print("Installing..")
+fs.move("/Tsecure/startup/","/startup")
+verify()
+sleep(1)
+term.clear()
+term.setCursorPos(1,1)
+print("Installation Complete!")
