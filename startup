@@ -1,0 +1,322 @@
+settings.set("shell.allow_disk_startup", false)
+settings.save(".settings")
+local pullEvent = os.pullEvent
+os.pullEvent = os.pullEventRaw
+
+-- var --
+local D = {}
+local sPass = false
+local result = 0
+local i = 0
+local check = false
+local waiting = true
+local manual = false
+local waitTime = 2
+local accessLvl = "5" -- what level is allowed access to this computer ( note clearance 9 is the highest)
+local adminLvl = "9"  -- what level is allow access to programs and opt file (clearance)
+local program = "" -- can only be accessed by high enough clearance
+-- NOTE: if you have no program you wish to run simply leave as ""         
+local Map = window.create(term.current(),1,1,51,22)
+local Uap = window.create(term.current(),17,10,21,1)
+local Pap = window.create(term.current(),17,12,21,1)
+-- func --
+
+function Mdisplay()
+  Map.setBackgroundColor(colors.cyan)
+  Map.setTextColor(colors.white)
+  Map.clear()
+  Map.setCursorPos(20,6)
+  Map.write("True Security")
+  Map.setCursorPos(1,19)
+  Map.write("Computer:")
+  Map.setTextColor(colors.gray)
+  Map.setCursorPos(10,19)
+  Map.write(os.computerLabel())
+end
+
+
+function CheckL()
+  if fs.exists("/Tsecure/Ti","r") then
+    local c = fs.open("/Tsecure/Ti","r")
+    local i = textutils.unserialise(c.readAll())
+    c.close()
+    local idCheck = "ID" 
+    local A = os.getComputerID()
+    if i[idCheck] == A then
+      if fs.exists("/Tsecure/tData","r") then
+        local f = fs.open("/Tsecure/tData","r")
+        local Tl = textutils.unserialise(f.readAll())
+        f.close()
+        for sID, var in pairs(Tl) do
+            checkl = var[1]
+            red = var[2]
+        end
+        local checki = os.getComputerID()
+        if checkl == checki then
+          check = true
+          --print("success")
+        else
+          term.setBackgroundColor(colors.black)
+          term.setTextColor(colors.red)
+          term.clear()
+          term.setCursorPos(1,1)
+          print("Mismatching Id, (Pirated/Cracked)")
+          sleep(5)
+          term.setTextColor(colors.white)
+          check = false
+        end
+      end
+    else
+      term.setBackgroundColor(colors.black)
+      term.setTextColor(colors.red)
+      term.clear()
+      term.setCursorPos(1,1)
+      print("Files seem to be missing, (Pirated/Cracked)")
+      sleep(5)
+      term.setTextColor(colors.white)
+      check = false
+    end
+  else
+    term.setBackgroundColor(colors.black)
+    term.setTextColor(colors.red)
+    term.clear()
+    term.setCursorPos(1,1)
+    print("Files seemed to be missing, (Pirated/Cracked)")
+    sleep(5)
+    term.setTextColor(colors.white)
+    check = false
+  end
+end
+
+function CheckD()
+  if fs.exists("/disk/Tsecure/tData","r") then
+    local f = fs.open("/disk/Tsecure/tData","r")
+    local diskUserFile = textutils.unserialise(f.readAll())
+    f.close()
+
+    local s = fs.open("/Tsecure/TiD","r")
+    local localUserFile = textutils.unserialise(s.readAll())
+    s.close()
+
+    local diskEntriesCount = 0
+    for tKey, tValue in pairs(diskUserFile) do diskEntriesCount = diskEntriesCount + 1 end
+
+
+    for tUserID, tUsername in pairs(diskUserFile) do
+      if localUserFile[tUserID] and localUserFile[tUserID][1] == tUsername then
+        tID = tUserID
+        user2 = localUserFile[tUserID][1]
+        clearance = localUserFile[tUserID][3]
+        tonumber(clearance)
+        if clearance >= accessLvl then
+          TempUser()
+          result = 1
+        else
+          Map.setCursorPos(14,8)
+          Map.setTextColor(colors.red)
+          Map.write("Higher permissions needed")
+		  disk.eject(side)
+          os.sleep(1.2)
+		  hold()
+        end
+      else
+        Map.setCursorPos(19,8)
+        Map.setTextColor(colors.red)
+        Map.write("User not found!")
+		disk.eject(side)
+        os.sleep(1.2)
+		hold()
+      end
+    end
+  end
+end
+
+
+
+function wait()
+		event1, side = os.pullEvent()
+		if event1 == "disk" then
+			if fs.exists("/disk/Tsecure/tData") then
+				waiting = false
+			else
+				Mdisplay()
+				disk.eject(side)
+				Map.setCursorPos(19,8)
+				Map.setTextColor(colors.red)
+				Map.write("User not found!")
+				os.sleep(1.2)
+			end
+		end
+	Mdisplay()
+end
+
+function TempUser()
+    if fs.exists("/Tsecure/Tempuser","r") then
+        fs.delete("/Tsecure/Tempuser")
+    end
+    local temp = {}
+    temp[tID] = {user2,clearance}
+    local tempfile  = fs.open("/Tsecure/Tempuser","w")
+    tempfile.write(textutils.serialise(temp))
+    tempfile.close()    
+end
+
+function now()
+		local evt, button, x, y = os.pullEvent("mouse_click")
+		if x >= 1 and x <= 50 and y >= 1 and y <= 19 then
+			manual = true
+			waiting = false
+		else
+			print("Waiting on input")
+		end
+end
+
+function Entry()
+    local Data = fs.open("Tsecure/TiD","r")
+    local hData = textutils.unserialise(Data.readAll())
+    Data.close()
+	repeat
+		Mdisplay()
+		paintutils.drawLine(18,13,34,13,colors.white)
+		paintutils.drawLine(18,16,34,16,colors.white)
+		term.setTextColor(colors.lightGray)
+		term.setCursorPos(18,13)
+		write("Username")
+		term.setCursorPos(18,16)
+		write("Password")
+		Map.setTextColor(colors.gray)
+		Map.setCursorPos(18,13)
+		userInput = read()
+		Map.setCursorPos(18,16)
+		passInput = read("*")
+		
+		userCount = 0
+		for tKey, tValue in pairs(hData) do userCount = userCount + 1 end
+		
+		for chckUser, chckPass in pairs(hData) do
+			i = i + 1
+			if (userInput == hData[chckUser][1]) and (passInput == hData[chckUser][2]) then
+				tID = chckUser
+				user2 = hData[chckUser][1]
+				pass2 = hData[chckUser][2]
+				clearance = hData[chckUser][3]
+				tonumber(clearance)
+				if clearance >= accessLvl then
+					TempUser()
+					check = 1
+					result = 1
+					manually = false
+				else
+					Map.setCursorPos(14,8)
+					Map.setTextColor(colors.red)
+					Map.write("Higher permissions needed")
+					os.sleep(1.2)
+					i = 0
+				end	
+			end	
+		end
+	until i >= userCount
+	if check == 1 then
+		print("all good")
+	else
+		Map.setCursorPos(19,8)
+		Map.setTextColor(colors.red)
+		Map.write("User not found!")
+		os.sleep(1.2)
+	end
+end
+
+function hold()
+	repeat
+		Mdisplay()
+		Map.setCursorPos(15,8)
+		Map.setTextColor(colors.gray)
+		Map.write("Waiting for User Disk..")
+		Map.setCursorPos(14,10)
+		Map.setTextColor(colors.lightGray)
+		Map.write("(Click to manually Login)")
+		parallel.waitForAny(now, wait)
+	until waiting == false
+end
+	
+           
+    
+
+function Login()
+    if fs.exists("Tsecure/TiD") == true then
+      repeat
+        CheckL()
+        if check == false then
+          print("Press Y if you agree to uninstall the pirtated version of True security")
+          local evt, key = os.pullEvent()
+          if (evt == "key") and (key == keys.y) then
+            term.clear()
+            term.setCursorPos(1,1)
+            print("removing /regist..")
+            os.sleep(0.5)
+            fs.delete("regist")
+            print("removing /Tsecure/..")
+            os.sleep(0.5)
+            if fs.exists("/Tsecure/","r") then
+              fs.delete("/Tsecure/")
+            end
+            print("removing /startup..")
+            os.sleep(0.5)
+            fs.delete("startup")
+            term.clear()
+            term.setCursorPos(1,1)
+            print("Complete")
+            sleep(1)
+            os.reboot()
+          end
+        end
+      until check == true
+	  repeat
+		hold()
+        if manual == true then
+				Entry()
+        else
+                CheckD()
+		end
+		until result == 1
+		Mdisplay()
+		Uap.setCursorBlink(false)
+		Map.setCursorPos(19,8)
+		Map.setTextColor(colors.lime)
+		Map.write("Access Granted")
+		redstone.setOutput(red, true)
+		disk.eject("bottom")
+		if clearance >= adminLvl then
+			local continue = true
+			os.startTimer(waitTime)
+			while continue do
+				local event2, key = os.pullEvent()
+				if (event2 == "key") and (key == keys.d) then
+				    redstone.setOutput(red, false)
+				    shell.run("/Tsecure/Opt.lua")
+				    continue = false
+				elseif event2 == "timer" then
+				    continue = false
+        if fs.exists(program) then
+            if program == "" then
+                os.reboot()
+            else  
+				            redstone.setOutput(red, false)
+                shell.run(program)
+            end
+        else
+            os.reboot()
+        end
+				end
+			end
+		else
+			os.sleep(2)
+			redstone.setOutput(red, false)
+			os.reboot()
+		end
+    else
+      sPass = true
+      shell.run("/Tsecure/regist")
+    end
+end
+Login()
