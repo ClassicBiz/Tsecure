@@ -52,7 +52,7 @@ print("Installing..")
 if fs.exists("startup") then
     rID = math.random(1,100)
     fs.move("startup",".startup"..rID)
-    fs.move("/Tsecure/startup/","/startup")
+    fs.move("/Tsecure/startup","/startup")
 end
 verify()
 sleep(1)
