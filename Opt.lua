@@ -73,6 +73,7 @@ function boot()
 		Map.setTextColor(colors.white)
 		write("!")
 	end
+	Map.setBackgroundColor(colors.cyan)
 	Map.setTextColor(colors.gray)
     while plus do
 	    local event1, param1, x,y = os.pullEvent() 
