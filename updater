@@ -46,6 +46,7 @@ function checkForUpdates(updateUrl)
 				    k = false
 				    else
 				    return error()
+				    end
 			        end
 		      end
     until k == false
