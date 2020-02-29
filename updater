@@ -51,6 +51,7 @@ function checkForUpdates(updateUrl)
 		      end
     until k == false
 end
+term.setBackgroundColor(colors.black)
 term.clear()
 checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/version")
 if update == 1 then
