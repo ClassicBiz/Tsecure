@@ -11,19 +11,19 @@ function Mdisplay()
 	Map.clear()
 	Map.setCursorPos(36,19)
 	Map.write("TS Version:")
-      if fs.exists("Tsecure/tData","r") then	
-		        verTbl = load()
-          for k, v in pairs(verTbl) do
-              ver = v[3]
-          end
-          Map.setCursorPos(1,19)
-		        Map.write("Computer:")
-		        Map.setTextColor(colors.gray)
-		        Map.setCursorPos(10,19)
-		        Map.write(os.computerLabel())
-          Map.setCursorPos(48,19)
-          Map.write(ver)
-	    end
+	if fs.exists("Tsecure/tData","r") then	
+		verTbl = load()
+          	for k, v in pairs(verTbl) do
+                	ver = v[3]
+          	end
+        	Map.setCursorPos(1,19)
+		Map.write("Computer:")
+		Map.setTextColor(colors.gray)
+	        Map.setCursorPos(10,19)
+	        Map.write(os.computerLabel())
+          	Map.setCursorPos(48,19)
+          	Map.write(ver)
+	end
 		Map.setCursorPos(51,1)
 		Map.setTextColor(colors.red)
 		Map.write("x")
