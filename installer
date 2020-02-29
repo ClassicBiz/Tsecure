@@ -63,3 +63,4 @@ print("Installation Complete!")
 if fs.exists("/Tescure/updater") then
     fs.delete("/Tsecure/installer.lua")
 end
+os.reboot()
