@@ -10,11 +10,7 @@ function Mdisplay()
     Map.clear()
     Map.setCursorPos(20,6)
     Map.write("True Security")
-    Map.setCursorPos(1,19)
-    Map.write("Computer:")
     Map.setTextColor(colors.gray)
-    Map.setCursorPos(10,19)
-    Map.write(os.computerLabel())
 end
  
 function Sdisplay()
@@ -45,14 +41,39 @@ function Sdisplay()
    term.setBackgroundColor(colors.white)
 end
 
+function update()
+	local response = http.get("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/version")
+	local data = response.readAll()
+	local verFile = fs.open("/Tsecure/tData","r")
+	local verTbl = textutils.unserialise(verFile.readAll())
+	verFile.close()
+	for k, ver in pairs(verTbl) do
+		current = ver[3]
+	end
+	if data == current then
+		new = 0
+	else
+		new = 1 
+	end
+end
+
 function boot()
     local plus = true
     Sdisplay()
-    paintutils.drawBox(3,1,10,2,colors.lightBlue)
+    paintutils.drawBox(3,1,10,3,colors.lightBlue)
     Map.setCursorPos(3,1)
     write("Restart")
     Map.setCursorPos(3,2)
     write("Shutdown")
+    Map.setCursorPos(3,3)
+    write("Update")
+    update()
+	if new == 1 then
+		Map.setCursorPos(10,3)
+		Map.setTextColor(colors.white)
+		write("!")
+	end
+	Map.setTextColor(colors.gray)
     while plus do
 	    local event1, param1, x,y = os.pullEvent() 
         if event1 == "mouse_click" and x>=3 and x<=10 and y == 1 then
@@ -61,6 +82,9 @@ function boot()
         elseif event1 == "mouse_click" and x>=3 and x<=10 and y == 2 then
             plus = false
             os.shutdown()
+        elseif event1 == "mouse_click" and x>=3 and x<=10 and y == 3 then
+            plus = false
+            shell.run("/Tsecure/updater")
         elseif event1 == "mouse_click" and x>=1 and x<=2 and y == 1 then
            slide = false
            plus = false
