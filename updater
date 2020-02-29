@@ -37,12 +37,20 @@ function checkForUpdates(updateUrl)
 			        else
 			            print("A new update is avaliable.")
 			            sleep(1)
+				    print("Are you sure you wish to update?(Y/N)")
+				    print("|>")
+				    term.setCursorPos(3,4)
+				    input = read()
+				    if input == keys.y then
 				    update = 1
 				    k = false
+				    else
+				    return error()
 			        end
 		      end
     until k == false
 end
+term.clear()
 checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/version")
 if update == 1 then
 	local upFile = {}
