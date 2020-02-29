@@ -45,7 +45,7 @@ function checkForUpdates(updateUrl)
 end
 checkForUpdates("https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/version")
 if update == 1 then
-	
+	local upFile = {}
 	if fs.exists("/Tsecure/installer.lua") then
 		fs.delete("/Tsecure/installer.lua")
 	end
