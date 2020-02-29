@@ -29,6 +29,7 @@ function checkForUpdates(updateUrl)
 		      local response = http.get(updateUrl)
 	      	if response then
             local data = response.readAll()
+	    			term.setCursorPos(1,1)
     			     print("V:"..data)
 			     newVer = data
 			        if data == current then
