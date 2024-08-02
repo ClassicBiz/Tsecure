@@ -1,5 +1,5 @@
 function downloadFiles(urlFile, pathFile)
-    local url = "https://raw.githubusercontent.com/ClassicBiz/Tsecure/master/" .. urlFile
+    local url = "https://raw.githubusercontent.com/ClassicBiz/Tsecure/Version-2.1.7/" .. urlFile
     print("Downloading From >>")
     print(url)
     for i = 1, 3 do
