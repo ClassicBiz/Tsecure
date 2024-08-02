@@ -158,13 +158,17 @@ function TempUser()
 end
 
 function now()
-		local evt, button, x, y = os.pullEvent("mouse_click")
-		if x >= 1 and x <= 50 and y >= 1 and y <= 19 then
-			manual = true
-			waiting = false
-		else
-			print("Waiting on input")
-		end
+    local evt, button, x, y = os.pullEvent("mouse_click")
+    if x and y then 
+        if x >= 1 and x <= 50 and y >= 1 and y <= 19 then
+            manual = true
+            waiting = false
+        else
+            print("Waiting on input")
+        end
+    else
+        print("Event was terminated or interrupted")
+    end
 end
 
 function Entry()
